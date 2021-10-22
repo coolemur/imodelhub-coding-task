@@ -1,1 +1,17 @@
-{"configuration":{"routes":[{"sourcePath":"/items","destinationUrl":"https://example.com/items"}],"clients":[{"clientId":"1234","limit":1000,"seconds":10}]}}
+{
+  "configuration": {
+    "routes": [
+      {
+        "sourcePath": "/users",
+        "destinationUrl": "https://reqres.in/api/users"
+      }
+    ],
+    "clients": [
+      {
+        "clientId": "1234",
+        "limit": 1000,
+        "seconds": 10
+      }
+    ]
+  }
+}
