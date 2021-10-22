@@ -1,0 +1,21 @@
+GET http://localhost:4000/configuration
+
+###
+
+POST http://localhost:4000/configuration
+content-type: application/json
+
+{
+  "routes":[ {
+        "sourcePath": "/items",
+        "destinationUrl": "https://example.com/items"
+      }
+    ],
+  "clients":[
+    {
+      "clientId": "1234",
+      "limit": 1000,
+      "seconds": 10
+    }
+  ] 
+}
