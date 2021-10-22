@@ -1,6 +1,15 @@
 {
+  "admins": [
+    "1",
+    "2",
+    "3"
+  ],
   "configuration": {
     "routes": [
+      {
+        "sourcePath": "/items",
+        "destinationUrl": "https://example.com/items1"
+      },
       {
         "sourcePath": "/users",
         "destinationUrl": "https://reqres.in/api/users"

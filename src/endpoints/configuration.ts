@@ -1,8 +1,5 @@
-import { JsonDB } from 'node-json-db';
-import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
 import { Request, Response } from 'express';
-
-const db = new JsonDB(new Config('configuration', true, false, '/'));
+import db from '../db';
 
 export function get(req: Request, res: Response): Response<unknown, Record<string, unknown>> | undefined {
   const configuration = db.getData('/configuration');
@@ -16,7 +13,7 @@ export function post(req: Request, res: Response): Response<unknown, Record<stri
     return res.status(400).json({
       error: 'Invalid configuration',
     });
-  };
+  }
 
   db.push('/configuration', configuration);
 

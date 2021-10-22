@@ -1,9 +1,6 @@
-import { JsonDB } from 'node-json-db';
-import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
 import { Request, Response } from 'express';
-import axios, { AxiosResponse } from 'axios';
-
-const db = new JsonDB(new Config('configuration', true, false, '/'));
+import axios from 'axios';
+import db from '../db';
 
 export async function get(req: Request, res: Response): Promise<Response<unknown, Record<string, unknown>> | undefined> {
   const configuration = db.getData('/configuration');

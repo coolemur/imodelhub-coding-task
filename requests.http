@@ -1,16 +1,22 @@
 GET http://localhost:4000/configuration
+client-id: 1
 
 ###
 
 POST http://localhost:4000/configuration
 content-type: application/json
+client-id: 1
 
 {
-  "routes":[ {
-        "sourcePath": "/items",
-        "destinationUrl": "https://example.com/items"
-      }
-    ],
+  "routes":[{
+      "sourcePath": "/items",
+      "destinationUrl": "https://example.com/items1"
+    },
+    {
+      "sourcePath": "/users",
+      "destinationUrl": "https://reqres.in/api/users"
+    }
+  ],
   "clients":[
     {
       "clientId": "1234",
@@ -23,10 +29,12 @@ content-type: application/json
 ###
 
 GET http://localhost:4000/users
+client-id: 1234
 
 ###
 
 POST http://localhost:4000/users
+client-id: 1234
 
 {
   "name": "morpheus",
