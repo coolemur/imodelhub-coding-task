@@ -11,7 +11,7 @@ interface Client {
   seconds?: number;
 }
 
-interface ConfigurationInput {
+interface Configuration {
   routes: Array<Route>;
   clients: Array<Client>;
 }
