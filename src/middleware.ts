@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import db from './db';
+import * as db from './db';
 
 export function verifyAdmins(req: Request, res: Response, next: NextFunction, admins: Array<string>): void {
   const clientId = req.headers['client-id'] as string;
@@ -15,8 +15,8 @@ export function verifyAdmins(req: Request, res: Response, next: NextFunction, ad
 
 export function verifyClient(req: Request, res: Response, next: NextFunction): void {
   const clientId = req.headers['client-id'] as string;
-  const configuration = db.getData('/configuration');
-  const client: Client = configuration.clients.find((c: Client) => c.clientId === clientId);
+  const configuration = db.getConfiguration();
+  const client: Client | undefined = configuration.clients ? configuration.clients.find((c: Client) => c.clientId === clientId) : undefined;
 
   if (!clientId) {
     res.status(400).send('Bad Request');
@@ -80,8 +80,8 @@ function saveClient(client: Client) {
 
   client.lastRequest = new Date().getTime();
 
-  const configuration = db.getData('/configuration');
+  const configuration = db.getConfiguration();
   const index = configuration.clients.findIndex((c: Client) => c.clientId === client.clientId);
   configuration.clients[index] = client;
-  db.push('/configuration', configuration);
+  db.setConfiguration(configuration);
 }

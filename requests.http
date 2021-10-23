@@ -10,7 +10,7 @@ client-id: 1
 {
   "routes":[{
       "sourcePath": "/items",
-      "destinationUrl": "https://example.com/items1"
+      "destinationUrl": "https://example.com/items"
     },
     {
       "sourcePath": "/users",
@@ -20,7 +20,7 @@ client-id: 1
   "clients":[
     {
       "clientId": "1234",
-      "limit": 1000,
+      "limit": 3,
       "seconds": 10
     }
   ] 
@@ -40,3 +40,8 @@ client-id: 1234
   "name": "morpheus",
   "job": "leader"
 }
+
+###
+
+GET http://localhost:4000/items
+client-id: 1111
