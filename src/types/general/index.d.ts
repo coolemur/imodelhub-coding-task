@@ -4,9 +4,11 @@ interface Route {
 }
 
 interface Client {
+  requests?: number;
+  lastRequest?: number;
   clientId: string;
-  limit: number;
-  seconds: number;
+  limit?: number;
+  seconds?: number;
 }
 
 interface ConfigurationInput {
