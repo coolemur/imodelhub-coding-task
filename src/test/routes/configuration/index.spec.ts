@@ -150,4 +150,12 @@ describe("configuration routes", function () {
 
     return restoreConfig(configuration)
   });
+
+  it("/configuration GET responds with 403 when client-id is provided, but doesn't match any admin id", async function () {
+    return api.get("/configuration").set('client-id', '1234').expect(403);
+  });
+
+  it("/configuration POST responds with 403 when client-id is provided, but doesn't match any admin id", async function () {
+    return api.post("/configuration").set('client-id', '1234').expect(403);
+  });
 });

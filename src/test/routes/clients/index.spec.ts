@@ -195,5 +195,57 @@ describe("clients routes", function () {
     return restoreConfig(configuration);
   });
 
+  it("/items GET responds with 403 when client-id is provided in header, but doesn't mach any clients", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [
+          {
+            "sourcePath": "/items",
+            "destinationUrl": "https://example.com/items"
+          }],
+        "clients": [
+          {
+            "clientId": "1111",
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .get("/items")
+      .set('client-id', '9999')
+      .expect(403);
+
+    return restoreConfig(configuration);
+  });
+
+  it("/items POST responds with 403 when client-id is provided in header, but doesn't mach any clients", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [
+          {
+            "sourcePath": "/items",
+            "destinationUrl": "https://example.com/items"
+          }],
+        "clients": [
+          {
+            "clientId": "1111",
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .post("/items")
+      .set('client-id', '9999')
+      .expect(403);
+
+    return restoreConfig(configuration);
+  });
+
 
 });
