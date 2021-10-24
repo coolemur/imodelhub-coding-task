@@ -116,7 +116,7 @@ describe("clients routes", function () {
   At the time we are writing this test, https://example.com/items is returning status code 404 (inspected in Network tab), but showing the content of website. Therefore, we will be using the following test to test the limit (checking 404 status instead of 200).
   */
 
-  it("/items GET responds with 429 if the limit is reached", async function () {
+  it("/items GET responds with 429 if the limit is exceeded", async function () {
     const configuration = await preserveConfig();
 
     await api.post("/configuration")
@@ -155,8 +155,8 @@ describe("clients routes", function () {
     return restoreConfig(configuration);
   });
 
-  // Same as "/items GET responds with 429 if the limit is reached" test, but with a different API that returns 200.
-  it("/users GET responds with 429 if the limit is reached", async function () {
+  // Same as "/items GET responds with 429 if the limit is exceeded" test, but with a different API that returns 200.
+  it("/users GET responds with 429 if the limit is exceeded", async function () {
     const configuration = await preserveConfig();
 
     await api.post("/configuration")
