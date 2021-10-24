@@ -289,4 +289,122 @@ describe("clients routes", function () {
     return restoreConfig(configuration);
   });
 
+
+  it("GET or POST returns 404 if no matching sourcePath is found", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [{
+          "sourcePath": "/users",
+          "destinationUrl": "https://reqres.in/api/users"
+        }
+        ],
+        "clients": [
+          {
+            "clientId": "1234",
+            "limit": 2,
+            "seconds": 10
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .get("/items")
+      .set('client-id', '1234')
+      .expect(404);
+
+    await api
+      .post("/items")
+      .set('client-id', '1234')
+      .expect(404);
+
+    return restoreConfig(configuration);
+  });
+
+  it("GET calls increment request count", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [{
+          "sourcePath": "/users",
+          "destinationUrl": "https://reqres.in/api/users"
+        }
+        ],
+        "clients": [
+          {
+            "clientId": "1234",
+            "limit": 2,
+            "seconds": 10
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .get("/users")
+      .set('client-id', '1234')
+      .expect(302);
+
+    await api
+      .get("/users")
+      .set('client-id', '1234')
+      .expect(302);
+
+    await api
+      .get("/configuration")
+      .set('client-id', '1')
+      .expect(200)
+      .expect((res) => {
+        const configuration = res.body;
+        expect(configuration.clients[0].requests).to.equal(2);
+      });
+
+    return restoreConfig(configuration);
+  });
+
+  it("POST calls increment request count", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [{
+          "sourcePath": "/users",
+          "destinationUrl": "https://reqres.in/api/users"
+        }
+        ],
+        "clients": [
+          {
+            "clientId": "1234",
+            "limit": 2,
+            "seconds": 10
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .post("/users")
+      .set('client-id', '1234')
+      .expect(302);
+
+    await api
+      .post("/users")
+      .set('client-id', '1234')
+      .expect(302);
+
+    await api
+      .get("/configuration")
+      .set('client-id', '1')
+      .expect(200)
+      .expect((res) => {
+        const configuration = res.body;
+        expect(configuration.clients[0].requests).to.equal(2);
+      });
+
+    return restoreConfig(configuration);
+  });
+
 });
