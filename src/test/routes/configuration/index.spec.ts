@@ -1,30 +1,5 @@
-import request from "supertest";
 import { expect } from "chai";
-
-import createServer from "server";
-const app = createServer();
-const api = request(app);
-
-async function preserveConfig(): Promise<Configuration> {
-  const response = await api
-    .get("/configuration")
-    .set('client-id', '1')
-    .expect(200);
-
-  const configuration = response.body;
-
-  if (!configuration) {
-    throw new Error("Configuration not found");
-  }
-
-  return configuration;
-}
-
-async function restoreConfig(configuration: Configuration) {
-  return api.post("/configuration")
-    .send(configuration)
-    .set('client-id', '1').expect(200);
-}
+import { api, preserveConfig, restoreConfig } from '../helpers';
 
 describe("configuration routes", function () {
 
