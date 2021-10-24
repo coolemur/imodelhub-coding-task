@@ -27,9 +27,9 @@ async function restoreConfig(configuration: Configuration) {
 }
 
 describe("clients routes", function () {
-  it("/users GET responds with 200", async function () {
+  it("/users GET responds with 302", async function () {
     const configuration = await preserveConfig();
-    await api.get("/users").set('client-id', '1234').expect(200);
+    await api.get("/users").set('client-id', '1234').expect(302);
     return restoreConfig(configuration)
   });
 
@@ -179,12 +179,12 @@ describe("clients routes", function () {
     await api
       .get("/users")
       .set('client-id', '1234')
-      .expect(200);
+      .expect(302);
 
     await api
       .get("/users")
       .set('client-id', '1234')
-      .expect(200);
+      .expect(302);
 
     await api
       .get("/users")
@@ -247,5 +247,46 @@ describe("clients routes", function () {
     return restoreConfig(configuration);
   });
 
+  // if matched sourcePath then set location in the header to destinationUrl from matching entry in the configuration and return the 302 status code
+  it("/items GET and POST responds with 302 and sets location header to the destinationUrl", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [{
+          "sourcePath": "/users",
+          "destinationUrl": "https://reqres.in/api/users"
+        }
+        ],
+        "clients": [
+          {
+            "clientId": "1234",
+            "limit": 2,
+            "seconds": 10
+          }
+        ]
+      })
+      .set('client-id', '1').expect(200);
+
+    await api
+      .get("/users")
+      .set('client-id', '1234')
+      .expect(302)
+      .expect((res) => {
+        expect(res.header.location).to.equal("https://reqres.in/api/users");
+        expect(res.status).to.equal(302);
+      });
+
+    await api
+      .post("/users")
+      .set('client-id', '1234')
+      .expect(302)
+      .expect((res) => {
+        expect(res.header.location).to.equal("https://reqres.in/api/users");
+        expect(res.status).to.equal(302);
+      });
+
+    return restoreConfig(configuration);
+  });
 
 });

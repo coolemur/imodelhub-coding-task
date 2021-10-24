@@ -27,7 +27,8 @@ router.get("/:path", verifyClient, async (req: Request, res: Response) => {
       }
     });
 
-    return res.json(response.data);
+    res.location(route.destinationUrl);
+    return res.status(302).json(response.data);
   } catch (error: any) {
     if (error.message.includes("404")) {
       return res.status(404).json({
@@ -62,7 +63,9 @@ router.post("/:path", verifyClient, async (req: Request, res: Response) => {
         'client-id': clientId
       }
     });
-    return res.json(response.data);
+
+    res.location(route.destinationUrl);
+    return res.status(302).json(response.data);
   } catch (error: any) {
     if (error.message.includes("404")) {
       return res.status(404).json({
