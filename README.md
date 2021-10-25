@@ -57,7 +57,7 @@ Notes:
 
 - We use json file to persist api data.
 
-- Tests should not change the state of the data. That's why we are restoring the state of the data after each test that modifies it. **In real world application, we wouldn't do that. Or we would ensure this is non-production environment.**
+- Tests should not change the state of the data. That's why we are restoring the state of the data after each test that modifies it. **In real world application, we wouldn't do that. Or we would ensure this is non-production environment.** Also, testing should be done with unaltered data. So if you'll play around with the data, you'll get unexpected results. :]
 
 - We're also resetting the state of the data after each client call in tests. This is because rate counter and last call time are stored in the data.
 

@@ -133,4 +133,220 @@ describe("configuration routes", function () {
   it("/configuration POST responds with 403 when client-id is provided, but doesn't match any admin id", async function () {
     return api.post("/configuration").set('client-id', '1234').expect(403);
   });
+
+  // ---
+  // Bonus: CRUD for clients and routes
+  // ---
+
+  // GET clients
+  it("/configuration/clients GET responds with 200 and has property clientId", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [
+          {
+            "sourcePath": "/items",
+            "destinationUrl": "https://example.com/items"
+          }],
+        "clients": [
+          {
+            "clientId": "1111"
+          }
+        ]
+      })
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/clients")
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const clients = res.body;
+        expect(clients[0]).to.have.property("clientId");
+      });
+
+    return restoreConfig(configuration)
+  });
+
+  // GET routes
+  it("/configuration/routes GET responds with 200 and has properties sourcePath and destinationUrl", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration")
+      .send({
+        "routes": [
+          {
+            "sourcePath": "/items",
+            "destinationUrl": "https://example.com/items"
+          }],
+        "clients": [
+          {
+            "clientId": "1111"
+          }
+        ]
+      })
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/routes")
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const routes = res.body;
+        expect(routes[0]).to.have.property("sourcePath");
+        expect(routes[0]).to.have.property("destinationUrl");
+      }
+      );
+
+    return restoreConfig(configuration)
+  });
+
+
+  // POST client
+  it("/configuration/clients POST responds with 200 and has property clientId", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/clients")
+      .send({
+        "clientId": "2222",
+        "limit": 3,
+        "seconds": 10
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const client = res.body;
+        expect(client).to.have.property("clientId");
+      });
+
+
+    return restoreConfig(configuration)
+  });
+
+  // POST route
+  it("/configuration/routes POST responds with 200 and has properties sourcePath and destinationUrl", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/routes")
+      .send({
+        "sourcePath": "/items_new",
+        "destinationUrl": "https://example.com/items_new"
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const route = res.body;
+        expect(route).to.have.property("sourcePath");
+        expect(route).to.have.property("destinationUrl");
+      });
+
+    return restoreConfig(configuration)
+  });
+
+  // UPDATE client
+  it("/configuration/clients/:clientId PUT responds with 200 and has property clientId", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/clients")
+      .send({
+        "clientId": "2222",
+        "limit": 3,
+        "seconds": 10
+      })
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.put("/configuration/clients/2222")
+      .send({
+        "limit": 5,
+        "seconds": 20
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const client = res.body;
+        expect(client).to.have.property("clientId");
+      });
+
+    return restoreConfig(configuration)
+  });
+
+  // UPDATE route
+  it("/configuration/routes/:sourcePath PUT responds with 200 and has properties sourcePath and destinationUrl", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/routes")
+      .send({
+        "sourcePath": "/items_new",
+        "destinationUrl": "https://example.com/items_new"
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const route = res.body;
+        expect(route).to.have.property("sourcePath");
+        expect(route).to.have.property("destinationUrl");
+      });
+
+    await api.put("/configuration/routes/items_new")
+      .send({
+        "sourcePath": "/items_new",
+        "destinationUrl": "https://example.com/items_new_updated"
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const route = res.body;
+        expect(route).to.have.property("sourcePath");
+        expect(route).to.have.property("destinationUrl");
+      });
+
+    return restoreConfig(configuration)
+  });
+
+  // DELETE client
+  it("/configuration/clients/:clientId DELETE responds with 200 and has property clientId", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/clients")
+      .send({
+        "clientId": "2222",
+        "limit": 3,
+        "seconds": 10
+      })
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.delete("/configuration/clients/2222")
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const client = res.body;
+        expect(client).to.have.property("clientId");
+      });
+
+    return restoreConfig(configuration)
+  });
+
+  // DELETE route
+  it("/configuration/routes/:sourcePath DELETE responds with 200 and has properties sourcePath and destinationUrl", async function () {
+    const configuration = await preserveConfig();
+
+    await api.post("/configuration/routes")
+      .send({
+        "sourcePath": "/items_new",
+        "destinationUrl": "https://example.com/items_new"
+      })
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const route = res.body;
+        expect(route).to.have.property("sourcePath");
+        expect(route).to.have.property("destinationUrl");
+      }
+      );
+
+    await api.delete("/configuration/routes/items_new")
+      .set('client-id', '1')
+      .expect(200).then((res) => {
+        const route = res.body;
+        expect(route).to.have.property("sourcePath");
+        expect(route).to.have.property("destinationUrl");
+      }
+      );
+
+    return restoreConfig(configuration)
+  });
 });

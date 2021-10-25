@@ -45,3 +45,68 @@ client-id: 1234
 
 GET http://localhost:4000/items
 client-id: 1111
+
+###
+
+GET http://localhost:4000/configuration/clients
+client-id: 1
+
+###
+
+GET http://localhost:4000/configuration/routes
+client-id: 1
+
+###
+
+POST http://localhost:4000/configuration/clients
+content-type: application/json
+client-id: 1
+
+{
+  "clientId": "2225",
+  "limit": 3,
+  "seconds": 10
+}
+
+###
+
+POST http://localhost:4000/configuration/routes
+content-type: application/json
+client-id: 1
+
+{
+  "sourcePath": "/items_new",
+  "destinationUrl": "https://example.com/items_new"
+}
+
+###
+
+PUT http://localhost:4000/configuration/clients/2225
+content-type: application/json
+client-id: 1
+
+{
+  "limit": 5,
+  "seconds": 25
+}
+
+###
+
+PUT http://localhost:4000/configuration/routes/items_new
+content-type: application/json
+client-id: 1
+
+{
+  "destinationUrl": "https://example.com/items_new_updated"
+}
+
+###
+
+DELETE http://localhost:4000/configuration/clients/2225
+client-id: 1
+
+###
+
+DELETE http://localhost:4000/configuration/routes/items_new
+client-id: 1
+
