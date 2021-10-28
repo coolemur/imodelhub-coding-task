@@ -142,19 +142,21 @@ describe("configuration routes", function () {
   it("/configuration/clients GET responds with 200 and has property clientId", async function () {
     const configuration = await preserveConfig();
 
+    const configurationInput: Configuration = {
+      "routes": [
+        {
+          "sourcePath": "/items",
+          "destinationUrl": "https://example.com/items"
+        }],
+      "clients": [
+        {
+          "clientId": "1111"
+        }
+      ]
+    }
+
     await api.post("/configuration")
-      .send({
-        "routes": [
-          {
-            "sourcePath": "/items",
-            "destinationUrl": "https://example.com/items"
-          }],
-        "clients": [
-          {
-            "clientId": "1111"
-          }
-        ]
-      })
+      .send(configurationInput)
       .set('client-id', '1')
       .expect(200);
 
@@ -163,6 +165,7 @@ describe("configuration routes", function () {
       .expect(200).then((res) => {
         const clients = res.body;
         expect(clients[0]).to.have.property("clientId");
+        expect(clients[0].clientId).to.equal("1111");
       });
 
     return restoreConfig(configuration)
@@ -172,19 +175,21 @@ describe("configuration routes", function () {
   it("/configuration/routes GET responds with 200 and has properties sourcePath and destinationUrl", async function () {
     const configuration = await preserveConfig();
 
+    const configurationInput: Configuration = {
+      "routes": [
+        {
+          "sourcePath": "/items",
+          "destinationUrl": "https://example.com/items"
+        }],
+      "clients": [
+        {
+          "clientId": "1111"
+        }
+      ]
+    }
+
     await api.post("/configuration")
-      .send({
-        "routes": [
-          {
-            "sourcePath": "/items",
-            "destinationUrl": "https://example.com/items"
-          }],
-        "clients": [
-          {
-            "clientId": "1111"
-          }
-        ]
-      })
+      .send(configurationInput)
       .set('client-id', '1')
       .expect(200);
 
@@ -194,8 +199,9 @@ describe("configuration routes", function () {
         const routes = res.body;
         expect(routes[0]).to.have.property("sourcePath");
         expect(routes[0]).to.have.property("destinationUrl");
-      }
-      );
+        expect(routes[0].sourcePath).to.equal("/items");
+        expect(routes[0].destinationUrl).to.equal("https://example.com/items");
+      });
 
     return restoreConfig(configuration)
   });
@@ -205,18 +211,25 @@ describe("configuration routes", function () {
   it("/configuration/clients POST responds with 200 and has property clientId", async function () {
     const configuration = await preserveConfig();
 
+    const clientInput = {
+      "clientId": "2222",
+      "limit": 3,
+      "seconds": 10
+    }
+
     await api.post("/configuration/clients")
-      .send({
-        "clientId": "2222",
-        "limit": 3,
-        "seconds": 10
-      })
+      .send(clientInput)
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/clients")
       .set('client-id', '1')
       .expect(200).then((res) => {
-        const client = res.body;
+        const clients = res.body;
+        const client = clients.find((c: Client) => c.clientId === clientInput.clientId);
         expect(client).to.have.property("clientId");
+        expect(client.clientId).to.equal(client.clientId);
       });
-
 
     return restoreConfig(configuration)
   });
@@ -225,16 +238,25 @@ describe("configuration routes", function () {
   it("/configuration/routes POST responds with 200 and has properties sourcePath and destinationUrl", async function () {
     const configuration = await preserveConfig();
 
+    const routeInput: Route = {
+      "sourcePath": "/items_new",
+      "destinationUrl": "https://example.com/items_new"
+    }
+
     await api.post("/configuration/routes")
-      .send({
-        "sourcePath": "/items_new",
-        "destinationUrl": "https://example.com/items_new"
-      })
+      .send(routeInput)
+      .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/routes")
       .set('client-id', '1')
       .expect(200).then((res) => {
-        const route = res.body;
+        const routes = res.body;
+        const route = routes.find((r: Route) => r.sourcePath === routeInput.sourcePath);
         expect(route).to.have.property("sourcePath");
         expect(route).to.have.property("destinationUrl");
+        expect(route.sourcePath).to.equal(routeInput.sourcePath);
+        expect(route.destinationUrl).to.equal(routeInput.destinationUrl);
       });
 
     return restoreConfig(configuration)
@@ -244,12 +266,14 @@ describe("configuration routes", function () {
   it("/configuration/clients/:clientId PUT responds with 200 and has property clientId", async function () {
     const configuration = await preserveConfig();
 
+    const clientInput: Client = {
+      "clientId": "2222",
+      "limit": 3,
+      "seconds": 10
+    }
+
     await api.post("/configuration/clients")
-      .send({
-        "clientId": "2222",
-        "limit": 3,
-        "seconds": 10
-      })
+      .send(clientInput)
       .set('client-id', '1')
       .expect(200);
 
@@ -259,9 +283,17 @@ describe("configuration routes", function () {
         "seconds": 20
       })
       .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/clients")
+      .set('client-id', '1')
       .expect(200).then((res) => {
-        const client = res.body;
+        const clients = res.body;
+        const client = clients.find((c: Client) => c.clientId === clientInput.clientId);
         expect(client).to.have.property("clientId");
+        expect(client.clientId).to.equal(client.clientId);
+        expect(client.limit).to.equal(5);
+        expect(client.seconds).to.equal(20);
       });
 
     return restoreConfig(configuration)
@@ -271,17 +303,15 @@ describe("configuration routes", function () {
   it("/configuration/routes/:sourcePath PUT responds with 200 and has properties sourcePath and destinationUrl", async function () {
     const configuration = await preserveConfig();
 
+    const routeInput: Route = {
+      "sourcePath": "/items_new",
+      "destinationUrl": "https://example.com/items_new"
+    }
+
     await api.post("/configuration/routes")
-      .send({
-        "sourcePath": "/items_new",
-        "destinationUrl": "https://example.com/items_new"
-      })
+      .send(routeInput)
       .set('client-id', '1')
-      .expect(200).then((res) => {
-        const route = res.body;
-        expect(route).to.have.property("sourcePath");
-        expect(route).to.have.property("destinationUrl");
-      });
+      .expect(200);
 
     await api.put("/configuration/routes/items_new")
       .send({
@@ -289,10 +319,17 @@ describe("configuration routes", function () {
         "destinationUrl": "https://example.com/items_new_updated"
       })
       .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/routes")
+      .set('client-id', '1')
       .expect(200).then((res) => {
-        const route = res.body;
+        const routes = res.body;
+        const route = routes.find((r: Route) => r.sourcePath === routeInput.sourcePath);
         expect(route).to.have.property("sourcePath");
         expect(route).to.have.property("destinationUrl");
+        expect(route.sourcePath).to.equal("/items_new");
+        expect(route.destinationUrl).to.equal("https://example.com/items_new_updated");
       });
 
     return restoreConfig(configuration)
@@ -302,20 +339,27 @@ describe("configuration routes", function () {
   it("/configuration/clients/:clientId DELETE responds with 200 and has property clientId", async function () {
     const configuration = await preserveConfig();
 
+    const clientInput: Client = {
+      "clientId": "2222",
+      "limit": 3,
+      "seconds": 10
+    }
+
     await api.post("/configuration/clients")
-      .send({
-        "clientId": "2222",
-        "limit": 3,
-        "seconds": 10
-      })
+      .send(clientInput)
       .set('client-id', '1')
       .expect(200);
 
     await api.delete("/configuration/clients/2222")
       .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/clients")
+      .set('client-id', '1')
       .expect(200).then((res) => {
-        const client = res.body;
-        expect(client).to.have.property("clientId");
+        const clients = res.body;
+        const client = clients.find((c: Client) => c.clientId === clientInput.clientId);
+        expect(client).to.be.undefined;
       });
 
     return restoreConfig(configuration)
@@ -325,27 +369,27 @@ describe("configuration routes", function () {
   it("/configuration/routes/:sourcePath DELETE responds with 200 and has properties sourcePath and destinationUrl", async function () {
     const configuration = await preserveConfig();
 
+    const routeInput: Route = {
+      "sourcePath": "/items_new",
+      "destinationUrl": "https://example.com/items_new"
+    }
+
     await api.post("/configuration/routes")
-      .send({
-        "sourcePath": "/items_new",
-        "destinationUrl": "https://example.com/items_new"
-      })
+      .send(routeInput)
       .set('client-id', '1')
-      .expect(200).then((res) => {
-        const route = res.body;
-        expect(route).to.have.property("sourcePath");
-        expect(route).to.have.property("destinationUrl");
-      }
-      );
+      .expect(200);
 
     await api.delete("/configuration/routes/items_new")
       .set('client-id', '1')
+      .expect(200);
+
+    await api.get("/configuration/routes")
+      .set('client-id', '1')
       .expect(200).then((res) => {
-        const route = res.body;
-        expect(route).to.have.property("sourcePath");
-        expect(route).to.have.property("destinationUrl");
-      }
-      );
+        const routes = res.body;
+        const route = routes.find((r: Route) => r.sourcePath === routeInput.sourcePath);
+        expect(route).to.be.undefined;
+      });
 
     return restoreConfig(configuration)
   });
