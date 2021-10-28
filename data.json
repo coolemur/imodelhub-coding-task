@@ -1,1 +1,1 @@
-{"admins":["1","2","3"],"configuration":{"routes":[{"sourcePath":"/items","destinationUrl":"https://example.com/items1"},{"sourcePath":"/users","destinationUrl":"https://reqres.in/api/users"}],"clients":[{"clientId":"1234","limit":3,"seconds":10,"requests":1,"lastRequest":1635076746637}]}}
+{"admins":["1","2","3"],"configuration":{"routes":[{"sourcePath":"/items","destinationUrl":"https://example.com/items1"},{"sourcePath":"/users","destinationUrl":"https://reqres.in/api/users"}],"clients":[{"clientId":"1234","limit":3,"seconds":10,"requests":1}]}}

@@ -99,15 +99,12 @@ describe("clients routes", function () {
         "routes": [{
           "sourcePath": "/items",
           "destinationUrl": "https://example.com/items"
-        }
-        ],
-        "clients": [
-          {
-            "clientId": "1234",
-            "limit": 2,
-            "seconds": 10
-          }
-        ]
+        }],
+        "clients": [{
+          "clientId": "1234",
+          "limit": 2,
+          "seconds": 10
+        }]
       })
       .set('client-id', '1').expect(200);
 

@@ -44,6 +44,7 @@ function setClientDefaults(client: Client) {
   This function is used to check if the client has exceeded the maximum number of requests in a given time period.
   Client request count is reset when the time period has elapsed.
 */
+
 function isTooManyRequests(client: Client): boolean {
   setClientDefaults(client);
 
@@ -53,32 +54,32 @@ function isTooManyRequests(client: Client): boolean {
 
   if (limit === 0) return true;
 
-  if (client.lastRequest) {
-    const secondsPassed = (now - client.lastRequest) / 1000;
-
-    if (secondsPassed > seconds) {
-      client.requests = 0;
-    }
-
-    if (client.requests && client.requests >= limit) {
-      return true;
-    }
+  if (client.firstRequest === undefined) {
+    client.firstRequest = now;
+    return false;
   }
 
-  return false;
+  const elapsed = now - client.firstRequest;
+
+  if (elapsed > seconds * 1000) {
+    client.firstRequest = now;
+    return false;
+  }
+
+  if (client.requests === undefined) {
+    client.requests = 1;
+  }
+
+  return client.requests >= limit;
 }
 
 /*
   This function is used to update the client's data in data.json.
 */
 function saveClient(client: Client) {
-  if (!client.requests) {
-    client.requests = 1;
-  } else {
+  if (client.requests) {
     client.requests++;
   }
-
-  client.lastRequest = new Date().getTime();
 
   const configuration = db.getConfiguration();
   const index = configuration.clients.findIndex((c: Client) => c.clientId === client.clientId);

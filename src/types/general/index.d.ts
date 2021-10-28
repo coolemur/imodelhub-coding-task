@@ -5,7 +5,7 @@ interface Route {
 
 interface Client {
   requests?: number;
-  lastRequest?: number;
+  firstRequest?: number;
   clientId: string;
   limit?: number;
   seconds?: number;
