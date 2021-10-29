@@ -52,7 +52,7 @@ function isTooManyRequests(client: Client): boolean {
   setClientDefaults(client);
 
   const limit = client.limit === undefined ? 1 : client.limit;
-  const seconds = client.seconds === undefined ? 1 : client.seconds;
+  const milliseconds = client.seconds === undefined ? 1 : client.seconds * 1000;
   const now = new Date().getTime();
 
   if (limit === 0) return true;
@@ -64,7 +64,7 @@ function isTooManyRequests(client: Client): boolean {
 
   const elapsed = now - client.firstRequest;
 
-  if (elapsed > seconds * 1000) {
+  if (elapsed > milliseconds) {
     client.firstRequest = now;
     return false;
   }
