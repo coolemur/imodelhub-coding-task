@@ -34,7 +34,7 @@ router.get("/:path", verifyClient, async (req: Request, res: Response) => {
       }
     });
 
-    res.location(route.destinationUrl);
+    // res.location(route.destinationUrl);
     return res.status(302).json(response.data);
   } catch (error: any) {
     if (error.message.includes("404")) {
