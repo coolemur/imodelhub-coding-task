@@ -3,9 +3,15 @@ import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
 
 const db = new JsonDB(new Config('data', true, false, '/'));
 
-export function getConfiguration(): Configuration {
+export function getConfiguration(): Configuration | undefined {
   try {
-    return db.getData("/configuration");
+    const configuration = db.getData("/configuration");
+
+    if (configuration.routes.some((route: Route) => route.sourcePath.includes('configuration') || route.sourcePath.includes('configure'))) {
+      return undefined;
+    }
+
+    return configuration;
   } catch (error: any) {
     if (error.message.includes("Can't find dataPath")) { // this should never happen if data is set up correctly
       db.push("/configuration", {});

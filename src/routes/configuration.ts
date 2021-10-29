@@ -12,6 +12,13 @@ router.get("/", (req, res, next) => {
   verifyAdmins(req, res, next, admins);
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
+
+  if (!configuration) {
+    return res.status(404).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   return res.json(configuration);
 });
 
@@ -66,6 +73,13 @@ router.get("/clients", (req, res, next) => {
   verifyAdmins(req, res, next, admins);
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   return res.json(configuration.clients);
 });
 
@@ -76,6 +90,13 @@ router.get("/routes", (req, res, next) => {
   verifyAdmins(req, res, next, admins);
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   return res.json(configuration.routes);
 });
 
@@ -91,6 +112,12 @@ router.post("/clients", (req, res, next) => {
   if (!client.clientId) {
     return res.status(400).json({
       error: 'Invalid client. Client must contain clientId',
+    });
+  }
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
     });
   }
 
@@ -114,6 +141,12 @@ router.post("/routes", (req, res, next) => {
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
   const route: Route = req.body;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
 
   if (!route.sourcePath) {
     return res.status(400).json({
@@ -149,6 +182,12 @@ router.put("/clients/:clientId", (req, res, next) => {
   const client: Client = req.body;
   const clientId = req.params.clientId;
 
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   if (!clientId) {
     return res.status(400).json({
       error: 'Invalid client. Client must contain clientId',
@@ -179,6 +218,12 @@ router.put("/routes/:sourcePath", (req, res, next) => {
   const route: Route = req.body;
   const sourcePath = `/${req.params.sourcePath}`;
 
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   if (!sourcePath) {
     return res.status(400).json({
       error: 'Invalid route. Route must contain sourcePath',
@@ -207,6 +252,12 @@ router.delete("/clients/:clientId", (req, res, next) => {
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
   const clientId = req.params.clientId;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
 
   if (!clientId) {
     return res.status(400).json({
@@ -237,6 +288,12 @@ router.delete("/routes/:sourcePath", (req, res, next) => {
 }, (req: Request, res: Response) => {
   const configuration = db.getConfiguration();
   const sourcePath = `/${req.params.sourcePath}`;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
 
   if (!sourcePath) {
     return res.status(400).json({

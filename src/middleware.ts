@@ -16,9 +16,12 @@ export function verifyAdmins(req: Request, res: Response, next: NextFunction, ad
 export function verifyClient(req: Request, res: Response, next: NextFunction): void {
   const clientId = req.headers['client-id'] as string;
   const configuration = db.getConfiguration();
-  const client: Client | undefined = configuration.clients ? configuration.clients.find((c: Client) => c.clientId === clientId) : undefined;
 
-  if (!clientId) {
+  const client: Client | undefined = configuration && configuration.clients ? configuration.clients.find((c: Client) => c.clientId === clientId) : undefined;
+
+  if (!configuration) {
+    res.status(500).send('Invalid configuration data.');
+  } else if (!clientId) {
     res.status(400).send('Bad Request');
   } else if (!client) {
     res.status(403).send('Forbidden');
@@ -82,7 +85,11 @@ function saveClient(client: Client) {
   }
 
   const configuration = db.getConfiguration();
-  const index = configuration.clients.findIndex((c: Client) => c.clientId === client.clientId);
-  configuration.clients[index] = client;
-  db.setConfiguration(configuration);
+  if (configuration) {
+    const index = configuration.clients.findIndex((c: Client) => c.clientId === client.clientId);
+    configuration.clients[index] = client;
+    db.setConfiguration(configuration);
+  } else {
+    throw new Error('Invalid configuration data.');
+  }
 }

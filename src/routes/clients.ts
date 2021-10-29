@@ -12,6 +12,13 @@ router.get("/:path", verifyClient, async (req: Request, res: Response) => {
   const clientId = req.headers['client-id'] as string;
   const configuration = db.getConfiguration();
   const path = `/${req.params.path}`;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   const route = configuration.routes.find((route: Route) => route.sourcePath === path);
 
   if (!route) {
@@ -49,6 +56,13 @@ router.post("/:path", verifyClient, async (req: Request, res: Response) => {
   const clientId = req.headers['client-id'] as string;
   const configuration = db.getConfiguration();
   const path = `/${req.params.path}`;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   const route = configuration.routes.find((route: Route) => route.sourcePath === path);
 
   if (!route) {
@@ -86,6 +100,13 @@ router.put("/:path", verifyClient, async (req: Request, res: Response) => {
   const clientId = req.headers['client-id'] as string;
   const configuration = db.getConfiguration();
   const path = `/${req.params.path}`;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   const route = configuration.routes.find((route: Route) => route.sourcePath === path);
 
   if (!route) {
@@ -124,6 +145,13 @@ router.delete("/:path", verifyClient, async (req: Request, res: Response) => {
   const clientId = req.headers['client-id'] as string;
   const configuration = db.getConfiguration();
   const path = `/${req.params.path}`;
+
+  if (!configuration) {
+    return res.status(500).json({
+      error: 'Invalid configuration data.'
+    });
+  }
+
   const route = configuration.routes.find((route: Route) => route.sourcePath === path);
 
   if (!route) {
